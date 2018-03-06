@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  web:
+    build: ./docker/web
+    ports:
+      - "8100:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/web/php/php.ini:/usr/local/etc/php/php.ini
+    working_dir: /var/www/html
+    links:
+      - db
+
+  php-cli:
+    build: ./docker/php-cli
+    volumes:
+      - .:/var/www/html
+
+  composer:
+    build: ./docker/composer
+    volumes:
+      - .:/var/www/html
+
+  node:
+    build: ./docker/node
+    volumes:
+      - .:/var/www/html
+
+  db:
+    build: ./docker/db
+    ports:
+      - "5432:5432"
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USERS: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: koel
+
+volumes:
+  db-data:
